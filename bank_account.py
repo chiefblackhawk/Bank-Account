@@ -1,3 +1,4 @@
+
 class BankAccount():
 	#docstring for BankAccount
 	def __init__(self, account_holder):
@@ -36,6 +37,19 @@ class BankAccount():
 
 
 
+	def balance(self):
+		mega_list = []
+		file = 'access_login.txt'
+		On = True
+		with open(file)as f_obj:
+				for content in f_obj:
+					mega_list.append(content.split())#compile megalist with smaller list created from each line of text file
+		while On:
+			for sublist in mega_list:
+				if self.account_holder in sublist:
+					print(f"Hello {self.account_holder.title()}, your current balance is: ${sublist[-1]}.")
+					On = False
+
 	def deposit(self):
 		while self.access_granted:
 			deposit_amount = int(input("How much are you depositing? "))
@@ -45,11 +59,9 @@ class BankAccount():
 	def withdraw(self):
 		print('na')
 
-	def balance(self):
-		print('na')
-
 def main():
-	justin = BankAccount('zeke')
+	justin = BankAccount('justin')
 	justin.login()
+	justin.balance()
 
 main()
