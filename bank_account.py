@@ -112,7 +112,7 @@ class BankAccount():
 		print('na')
 
 def main():
-	justin = BankAccount('justin')
+	justin = BankAccount('kera')
 	justin.login()
 	justin.balance()
 	justin.login()
