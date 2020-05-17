@@ -109,15 +109,92 @@ class BankAccount():
 						os.system('cp access_login_active.txt access_login.txt')
 
 	def withdraw(self):
-		print('na')
+		print("\nIn withdraw method")
+		mega_list = []
+		file = 'access_login.txt'
+		active = 'access_login_active.txt'
+		tmp = 'access_login_tmp.txt'
+		On = True
+		with open(file)as f_obj:
+			for content in f_obj:
+				mega_list.append(content.split())#compile megalist with smaller list created from each line of text file
+
+		#print(f'Mega List: {mega_list}')
+		withdraw_amount = int(input("How much are you withdrawing? "))
+		while self.access_granted:
+			while On:
+				for sublist in mega_list:
+					if self.account_holder in sublist:
+						print(f'Sub List: {sublist}')
+						
+						name = self.account_holder
+						dep_pin_number = self.file_pin
+
+						print(f"Hello {self.account_holder.title()}, adding ${withdraw_amount} to your balance.")
+						#print(sublist[2])
+
+						final_withdraw_value = int(sublist[2]) - withdraw_amount
+						withdraw_add = str(final_withdraw_value)
+						mega_list.remove(sublist) #remove active sublist/megalist index to only focus on adding other indexes to text file records
+						#print(f"Updated Mega List {mega_list}")
+
+						#Write to temp file after converting indexes (sublist) into string seperated by white_space
+						with open(tmp,'w')as f_obj:
+							for line in mega_list:
+								unlist = ' '.join(line) #Using join method to change make sublist/index of megalist mimic a string
+								#print(f"Unlist: {unlist}")
+								f_obj.write(unlist+'\n')
+
+						#Used to read content of temp file as a method of copying content
+						with open(tmp)as f_obj:
+							tpm_content = f_obj.read()
+							#print(f"TPM CONTENT: \n{tpm_content}")
+
+						#Write temp file content to active_file 
+						with open(active,'w')as f_obj:
+							f_obj.write(tpm_content)
+						
+						#Append active name, pin, and new deposit as a method of replacing entire line for user logged in.
+						with open(active,'a') as f_obj:
+							f_obj.write(name+' '+str(dep_pin_number)+' '+str(final_withdraw_value))
+							On = False
+						self.access_granted = False
+
+						#copy active to login file to update main file
+						os.system('cp access_login_active.txt access_login.txt')
+
+def user_info():
+	name = input("Please enter your name: ")
+	return name
 
 def main():
-	justin = BankAccount('kera')
-	justin.login()
-	justin.balance()
-	justin.login()
-	justin.deposit()
-	justin.login()
-	justin.balance()
+	Active = True
+	print("Welcome to the ATM")
+	while Active:
+		name = user_info()
+		print("Press '1' for Balance")
+		print("Press '2' for Deposit")
+		print("Press '3' for Withdraw")
+		print("Press '4' to Quit")
+		print("Note, all transactions require to re-enter pin for authentication.")
+
+		active_user = BankAccount(name)
+		transaction_type = int(input("Please enter your desired transaction type: "))
+		if transaction_type == 1:
+			active_user.login()
+			active_user.balance()
+
+		elif transaction_type == 2:
+			active_user.login()
+			active_user.deposit()
+
+		elif transaction_type == 3:
+			active_user.login()
+			active_user.withdraw()
+
+		else:
+			print("Ending program...")
+			Active = False
+
 
 main()
